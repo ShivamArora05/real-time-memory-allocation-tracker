@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Memory Visualization</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+    #memory {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .block {
+      height: 50px;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eee;
+    }
+    .used {
+      background: lightgreen;
+    }
+  </style>
+</head>
+<body>
+  <h2>Paging Memory Visualization</h2>
+
+  <div id="memory"></div>
+
+  <script>
+    // Sample memory frames for demo
+    let frames = [-1, 1, 1, -1, 2, 2, -1, -1,
+                  -1, -1, -1, -1, -1, -1, -1, -1];
+
+    const mem = document.getElementById("memory");
+
+    frames.forEach((f, i) => {
+      const d = document.createElement("div");
+      d.className = "block " + (f === -1 ? "" : "used");
+      d.innerText = f === -1 ? "Free" : "P" + f;
+      mem.appendChild(d);
+    });
+  </script>
+</body>
+</html>
