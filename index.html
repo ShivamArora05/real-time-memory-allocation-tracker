@@ -1,158 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Memory Allocation Visualizer</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #fafafa;
-    }
-
-    h2 {
-      margin-top: 30px;
-    }
-
-    .controls {
-      margin-bottom: 15px;
-    }
-
-    button {
-      padding: 6px 12px;
-      margin-right: 10px;
-      cursor: pointer;
-    }
-
-    .memory {
-      display: grid;
-      grid-template-columns: repeat(8, 70px);
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .block {
-      height: 45px;
-      border: 1px solid #333;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      transition: all 0.4s ease;
-      background: #e0e0e0;
-    }
-
-    .p1 { background: #90ee90; }
-    .p2 { background: #add8e6; }
-    .p3 { background: #ffcccb; }
-    .p4 { background: #ffd966; }
-
-    .info {
-      margin-top: 10px;
-      color: #555;
-      font-size: 14px;
-    }
-  </style>
+  <title>Memory Allocation Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Real-Time Memory Allocation Visualizer</h1>
+<h1>Real-Time Memory Allocation Dashboard</h1>
 
-  <div class="controls">
-    <button onclick="allocate()">Allocate</button>
-    <button onclick="freeBlock()">Free</button>
-    <button onclick="toggleAuto()">Play / Pause</button>
+<div class="container">
+
+  <div class="panel controls">
+    <h2>Controls</h2>
+    <button onclick="allocate()">Allocate Process</button>
+    <button onclick="freeProcess()">Deallocate Process</button>
+    <button onclick="toggleAuto()">Start / Stop Auto Simulation</button>
+
+    <div class="stats">
+      <strong>Stats</strong><br>
+      Total Frames: 16<br>
+      Used Frames: <span id="used">0</span><br>
+      Free Frames: <span id="free">16</span>
+    </div>
   </div>
 
-  <div class="info">
-    Left click Allocate | Right click Free | Play for auto animation
+  <div class="panel">
+    <h2>Paging (Frames)</h2>
+    <div id="paging" class="memory-grid"></div>
+
+    <h2 class="seg-title">Segmentation (Logical Blocks)</h2>
+    <div id="segment" class="memory-grid"></div>
   </div>
 
-  <h2>Paging (Frames)</h2>
-  <div id="paging" class="memory"></div>
+</div>
 
-  <h2>Segmentation (Blocks)</h2>
-  <div id="segment" class="memory"></div>
+<footer>
+  BTech CSE Mini Project | Memory Management Visualization
+</footer>
 
-  <script>
-    let paging = Array(16).fill(0);
-    let segment = Array(16).fill(0);
-    let pid = 1;
-    let auto = false;
-    let timer = null;
-
-    function colorClass(v) {
-      return v ? "p" + v : "";
-    }
-
-    function draw() {
-      const p = document.getElementById("paging");
-      const s = document.getElementById("segment");
-      p.innerHTML = "";
-      s.innerHTML = "";
-
-      paging.forEach(v => {
-        const d = document.createElement("div");
-        d.className = "block " + colorClass(v);
-        d.innerText = v ? "P" + v : "Free";
-        p.appendChild(d);
-      });
-
-      segment.forEach(v => {
-        const d = document.createElement("div");
-        d.className = "block " + colorClass(v);
-        d.innerText = v ? "P" + v : "Free";
-        s.appendChild(d);
-      });
-    }
-
-    function allocate() {
-      let count = 2 + Math.floor(Math.random() * 3); // 2–4 blocks
-      let done = 0;
-
-      for (let i = 0; i < paging.length && done < count; i++) {
-        if (paging[i] === 0) {
-          paging[i] = pid;
-          done++;
-        }
-      }
-
-      done = 0;
-      for (let i = 0; i < segment.length && done < count; i++) {
-        if (segment[i] === 0) {
-          segment[i] = pid;
-          done++;
-        }
-      }
-
-      pid = pid % 4 + 1; // cycle P1 to P4
-      draw();
-    }
-
-    function freeBlock() {
-      let target = Math.floor(Math.random() * 4) + 1;
-      paging = paging.map(v => v === target ? 0 : v);
-      segment = segment.map(v => v === target ? 0 : v);
-      draw();
-    }
-
-    function toggleAuto() {
-      auto = !auto;
-      if (auto) {
-        timer = setInterval(() => {
-          Math.random() > 0.5 ? allocate() : freeBlock();
-        }, 800);
-      } else {
-        clearInterval(timer);
-      }
-    }
-
-    document.addEventListener("contextmenu", e => {
-      e.preventDefault();
-      freeBlock();
-    });
-
-    draw();
-  </script>
-
+<script src="script.js"></script>
 </body>
 </html>
