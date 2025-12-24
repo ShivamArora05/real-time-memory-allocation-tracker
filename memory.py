@@ -1,12 +1,14 @@
-TOTAL_MEMORY = 64   # in KB
-PAGE_SIZE = 4
+# Real-Time Memory Allocation Tracker
+# Paging and Segmentation Simulation
+TOTAL_MEMORY = 64   # Total memory in KB
+PAGE_SIZE = 4       # Page size in KB
 FRAMES = TOTAL_MEMORY // PAGE_SIZE
-
-# ---------- PAGING ----------
-frames = [-1] * FRAMES
-process_pages = {}
+# PAGING
+frames = [-1] * FRAMES          # Frame table, -1 means free
+process_pages = {}              # Stores pages used by each process
 
 def paging_allocate(pid, size):
+    # Calculation of how much pages needed
     pages = (size + PAGE_SIZE - 1) // PAGE_SIZE
     free = [i for i in range(FRAMES) if frames[i] == -1]
 
@@ -14,12 +16,14 @@ def paging_allocate(pid, size):
         print("Not enough memory for paging")
         return
 
+    # Allocate frames
     for i in range(pages):
         frames[free[i]] = pid
     process_pages[pid] = pages
     print(f"Process {pid} allocated using paging")
 
 def paging_deallocate(pid):
+    # Free frames of the process
     for i in range(FRAMES):
         if frames[i] == pid:
             frames[i] = -1
@@ -27,11 +31,11 @@ def paging_deallocate(pid):
     print(f"Process {pid} removed from paging")
 
 def paging_fragmentation():
-    used = sum(1 for f in frames if f != -1)
-    allocated = used * PAGE_SIZE
+    # Internal fragmentation
+    used_frames = sum(1 for f in frames if f != -1)
+    allocated = used_frames * PAGE_SIZE
     actual = sum(process_pages[pid] * PAGE_SIZE for pid in process_pages)
-    internal = allocated - actual
-    return internal
+    return allocated - actual
 
 def show_paging():
     print("\nPaging Memory:")
@@ -39,8 +43,8 @@ def show_paging():
         print(f"Frame {i}: {'Free' if f == -1 else 'P'+str(f)}")
     print("Internal Fragmentation:", paging_fragmentation(), "KB")
 
-# ---------- SEGMENTATION ----------
-segments = []   # (start, size, pid)
+# SEGMENTATION
+segments = []   # Each segment = (start, size, pid)
 
 def segment_allocate(pid, size):
     current = 0
@@ -85,7 +89,7 @@ def show_segments():
         print(f"P{s[2]} -> Start: {s[0]} KB, Size: {s[1]} KB")
     print("External Fragmentation:", external_fragmentation(), "KB")
 
-# ---------- MAIN ----------
+#  MAIN MENU 
 while True:
     print("\n=== Real-Time Memory Allocation Tracker ===")
     print("1 Paging Allocate")
